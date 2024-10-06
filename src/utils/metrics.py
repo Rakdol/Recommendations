@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List
+from typing import List, Dict
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
 
@@ -16,8 +16,36 @@ class RecSysMetrics(object):
     def rmse(self, true_ratings: List[float], pred_ratings: List[float]) -> float:
         return np.sqrt(self.mse(true_ratings=true_ratings, pred_ratings=pred_ratings))
 
+    def calc_precision_at_k(
+        self,
+        true_user2items: Dict[int, List[int]],
+        pred_user2items: Dict[int, List[int]],
+        k: int,
+    ) -> float:
+        scores = []
+        for user_id in true_user2items.keys():
+            p_at_k = self._precision_at_k(
+                true_user2items[user_id], pred_user2items[user_id], k
+            )
+            scores.append(p_at_k)
+        return np.mean(scores)
+
+    def calc_recall_at_k(
+        self,
+        true_user2items: Dict[int, List[int]],
+        pred_user2items: Dict[int, List[int]],
+        k: int,
+    ) -> float:
+        scores = []
+        for user_id in true_user2items.keys():
+            r_at_k = self._recall_at_k(
+                true_user2items[user_id], pred_user2items[user_id], k
+            )
+            scores.append(r_at_k)
+        return np.mean(scores)
+
     # Relevance Metrics
-    def precision_at_k(
+    def _precision_at_k(
         self, true_items: List[float], pred_items: List[float], k: int
     ) -> float:
         if k <= 0:
@@ -27,7 +55,7 @@ class RecSysMetrics(object):
 
         return p_at_k
 
-    def recall_at_k(
+    def _recall_at_k(
         self, true_items: List[float], pred_items: List[float], k: int
     ) -> float:
         if k <= 0:
@@ -37,17 +65,17 @@ class RecSysMetrics(object):
 
         return r_at_k
 
-    def f1_at_k(
+    def _f1_at_k(
         self, true_items: List[float], pred_items: List[float], k: int
     ) -> float:
 
         if k <= 0:
             return 0
 
-        precision = self.precision_at_k(
+        precision = self._precision_at_k(
             true_items=true_items, pred_items=pred_items, k=k
         )
-        recall = self.recall_at_k(true_items=true_items, pred_items=pred_items, k=k)
+        recall = self._recall_at_k(true_items=true_items, pred_items=pred_items, k=k)
 
         if precision + recall <= 0.0:
             return 0.0
