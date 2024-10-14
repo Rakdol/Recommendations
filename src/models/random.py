@@ -4,8 +4,9 @@ from collections import defaultdict
 import numpy as np
 import pandas as pd
 
+from base import BaseModel
 
-class RandomMovieRatingModel(object):
+class RandomMovieRatingModel(BaseModel):
     def __init__(self, unique_user_ids: List[int], unique_movie_ids: List[int]) -> None:
 
         self.userid_index = dict(zip(unique_user_ids, range(len(unique_user_ids))))
@@ -34,7 +35,7 @@ class RandomMovieRatingModel(object):
         return pred_results
 
 
-class RandomMovieRankingModel(object):
+class RandomMovieRankingModel(BaseModel):
     def __init__(self, movielens_train: pd.DataFrame, top_k: int = 10):
         self.top_k = top_k
         self.user_evaluated_movies = (

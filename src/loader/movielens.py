@@ -68,8 +68,8 @@ class MovieLensLoader(object):
             movielens_train,
             movielens_test,
             movielens_test_user2items,
-            moveis,
             users,
+            moveis,
             ratings,
         )
 
